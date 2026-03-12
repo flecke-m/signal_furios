@@ -2,20 +2,20 @@
 
 export GDK_SCALE=2  
 export GTK_IM_MODULE=Maliit 
-export GTK_IM_MODULE_FILE=/home/furios/.config/signalut.furios/immodules.cache 
+export GTK_IM_MODULE_FILE=/home/phablet/.config/signalut.pparent/immodules.cache 
 export GDK_BACKEND=x11 
 export DISABLE_WAYLAND=1 
 export DCONF_PROFILE=/nonexistent
-export XDG_CONFIG_HOME=/home/furios/.config/signalut.furios/
-export XDG_DATA_HOME=/home/furios/.local/share/signalut.furios/
-export XDG_DESKTOP_DIR=/home/furios/.config/signalut.furios/
+export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
+export XDG_DATA_HOME=/home/phablet/.local/share/signalut.pparent/
+export XDG_DESKTOP_DIR=/home/phablet/.config/signalut.pparent/
 export LD_LIBRARY_PATH=$PWD/lib/aarch64-linux-gnu/
 
-utils/mkdir.sh /home/furios/.config/signalut.furios/
-echo "\"$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/im-maliit.so\""  > /home/furios/.config/signalut.furios/immodules.cache 
-echo  "\"Maliit\" \"Maliit Input Method\" \"maliit\" \"\" \"en:ja:ko:zh:*\""  >> /home/furios/.config/signalut.furios/immodules.cache 
+utils/mkdir.sh /home/phablet/.config/signalut.pparent/
+echo "\"$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/im-maliit.so\""  > /home/phablet/.config/signalut.pparent/immodules.cache 
+echo  "\"Maliit\" \"Maliit Input Method\" \"maliit\" \"\" \"en:ja:ko:zh:*\""  >> /home/phablet/.config/signalut.pparent/immodules.cache 
 
-echo 'XDG_DESKTOP_DIR="/home/furios/.cache/signalut.furios/downloads/"'> /home/furios/.config/signalut.furios/user-dirs.dirs
+echo 'XDG_DESKTOP_DIR="/home/phablet/.cache/signalut.pparent/downloads/"'> /home/phablet/.config/signalut.pparent/user-dirs.dirs
 
 if [ "$DISPLAY" = "" ]; then
     i=0
@@ -28,12 +28,12 @@ if [ "$DISPLAY" = "" ]; then
 fi
 
 export PATH=$PWD/bin:$PATH
-utils/mkdir.sh /home/furios/.cache/signalut.furios/
+utils/mkdir.sh /home/phablet/.cache/signalut.pparent/
 
 #Read micstate in conf
 while read p; do
   if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
-done <  /home/furios/.config/signalut.furios/signalut.furios/signalut.furios.conf 
+done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
 
 
     if [[ "$micstate" != *"micState=1"* ]]&& [[ "$micstate" != *"micState=4"* ]]; then
@@ -44,7 +44,7 @@ done <  /home/furios/.config/signalut.furios/signalut.furios/signalut.furios.con
             xdotool sleep 1;
             while read p; do
                 if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
-            done <  /home/furios/.config/signalut.furios/signalut.furios/signalut.furios.conf 
+            done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
             echo "$micstate"
             if  [ "$micstate" == "micState=1" ]||  [ "$micstate" == "micState=2" ]; then
                 break;
@@ -56,9 +56,9 @@ done <  /home/furios/.config/signalut.furios/signalut.furios/signalut.furios.con
     fi
 
     
-utils/rm.sh /home/furios/.local/share/signalut.furios/recently-used.xbel
+utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
 
-for file in /home/furios/.cache/signalut.furios/downloads/* ; do
+for file in /home/phablet/.cache/signalut.pparent/downloads/* ; do
     utils/rm.sh $file
 done
 
@@ -74,6 +74,6 @@ gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-
 ( utils/filedialog-deamon.sh $$ )&
 
 initpwd=$PWD
-utils/mkdir.sh /home/furios/.cache/signalut.furios/downloads/
-cd /home/furios/.cache/signalut.furios/downloads/
+utils/mkdir.sh /home/phablet/.cache/signalut.pparent/downloads/
+cd /home/phablet/.cache/signalut.pparent/downloads/
 exec $initpwd/opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions

@@ -9,7 +9,7 @@ import AudioWriter 1.0
 
 MainView {
     id: root
-    applicationName: "signalut.furios"
+    applicationName: "signalut.pparent"
     width: units.gu(45)
     height: units.gu(80)
     property bool pushed: false

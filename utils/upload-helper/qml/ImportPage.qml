@@ -21,12 +21,12 @@ import Pparent.UploadHelper 1.0
 import Ubuntu.Components.Themes.SuruDark 1.1
 
 MainView {
-    property var appID: "signalut.furios";
+    property var appID: "signalut.pparent";
     property var hook: "signalut";
     
     UploadHelper {
         id: uploadHelper
-        blob_path: "/home/furios/.cache/signalut.furios/downloads/"
+        blob_path: "/home/phablet/.cache/signalut.pparent/downloads/"
     }  
     Timer {
         id: timerquit

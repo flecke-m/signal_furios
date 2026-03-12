@@ -2,7 +2,7 @@
 
 PID=$1
 needtoexport=0;
-echo "" > /home/furios/.cache/signalut.furios/exportlock
+echo "" > /home/phablet/.cache/signalut.pparent/exportlock
 allreadynavigated=0
 
 xev -root  | while read -r _; do
@@ -29,7 +29,7 @@ xev -root  | while read -r _; do
                 
                 if [ "$window_min_height" -gt "753" ]; then
                     echo "Export File"
-                    for file in /home/furios/.cache/signalut.furios/downloads/* ; do
+                    for file in /home/phablet/.cache/signalut.pparent/downloads/* ; do
                         utils/rm.sh $file
                     done
                     xdotool windowfocus $window
@@ -54,8 +54,8 @@ xev -root  | while read -r _; do
                     while read -t 0.01 -r _; do :; done
                     xdotool sleep 5
                     while read -t 0.01 -r _; do :; done
-                    echo "">/home/furios/.cache/signalut.furios/downloads/00000000.png
-                    utils/rm.sh /home/furios/.local/share/signalut.furios/recently-used.xbel
+                    echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
+                    utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                 fi
             fi
         done    
@@ -66,13 +66,13 @@ xev -root  | while read -r _; do
                 if [ "$?" -eq "1" ]; then
                     export needtoexport=0
                     echo "download file" 
-                     read lock < /home/furios/.cache/signalut.furios/exportlock
+                     read lock < /home/phablet/.cache/signalut.pparent/exportlock
                     if [ "$lock" != "lock" ]; then
-                        echo "lock" > /home/furios/.cache/signalut.furios/exportlock
-                       ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/furios/.cache/signalut.furios/exportlock)  &
+                        echo "lock" > /home/phablet/.cache/signalut.pparent/exportlock
+                       ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock)  &
                        xdotool sleep 5;
-                       echo "">/home/furios/.cache/signalut.furios/downloads/00000000.png
-                       utils/rm.sh /home/furios/.local/share/signalut.furios/recently-used.xbel
+                       echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
+                       utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                     fi
                 fi
     fi

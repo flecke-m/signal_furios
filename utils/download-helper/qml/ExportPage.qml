@@ -21,7 +21,7 @@ import Pparent.DownloadHelper 1.0
 import Ubuntu.Components.Themes.SuruDark 1.1
 
 MainView {
-    property var appID: "signalut.furios";
+    property var appID: "signalut.pparent";
     property var hook: "signalut";  
     
 Page{
@@ -41,7 +41,7 @@ Page{
     }
     DownloadHelper {
         id: downloadHelper
-        blob_path: "/home/furios/.cache/signalut.furios/downloads/"
+        blob_path: "/home/phablet/.cache/signalut.pparent/downloads/"
     }  
     
   Timer {

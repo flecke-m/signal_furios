@@ -1,8 +1,8 @@
 {
-  "name": "signalut.furios",
-  "description": "Signal-desktop for FuriOS with responsive design",
+  "name": "signalut.pparent",
+  "description": "Signal-desktop for Ubuntu Touch with responsive design",
   "architecture": "@CLICK_ARCH@",
-  "title": "Signal FuriOS",
+  "title": "Signal UT",
   "hooks": {
     "signallauncher": {
       "apparmor": "signalut.apparmor",
@@ -15,6 +15,6 @@
     }
   },
   "version": "7.86.0-1",
-  "maintainer": "Matthias Fleckenstein <internet@fleckenstein-cloud.de>",
+  "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
   "framework": "ubuntu-touch-24.04-1.x"
 }

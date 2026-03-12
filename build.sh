@@ -199,36 +199,36 @@ EDITOR=true dpkg-source --commit . fix-keyboard
 DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 # =================================================
-# STEP 9: Build libnotify - should not be necessary for FuriOS since Signal uses OOTB libnotify, UT needs lomiri notifications
+# STEP 9: Build libnotify
 # =================================================
-#echo "[9/11] Building libnotify..."
+echo "[9/11] Building libnotify..."
 
-#rm -rvf ${BUILD_DIR}/libnotify || true
-#mkdir -p ${BUILD_DIR}/libnotify
-#cd ${BUILD_DIR}/libnotify
+rm -rvf ${BUILD_DIR}/libnotify || true
+mkdir -p ${BUILD_DIR}/libnotify
+cd ${BUILD_DIR}/libnotify
 
-#PKGNAME="libnotify"
-#VERSION="0.8.3"
-#ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1build2/libnotify_0.8.3.orig.tar.xz"
-#DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1/libnotify_0.8.3-1.debian.tar.xz"
+PKGNAME="libnotify"
+VERSION="0.8.3"
+ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1build2/libnotify_0.8.3.orig.tar.xz"
+DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1/libnotify_0.8.3-1.debian.tar.xz"
 
-#echo "📦 Download sources..."
-#wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION}.orig.tar.xz"
-#wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION}.debian.tar.xz"
+echo "📦 Download sources..."
+wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION}.orig.tar.xz"
+wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION}.debian.tar.xz"
 
-#echo "📂 Extract original code..."
-#tar -xf "${PKGNAME}_${VERSION}.orig.tar.xz"
-#SRC_DIR_LIBNOTIFY=$(tar -tf "${PKGNAME}_${VERSION}.orig.tar.xz" | head -1 | cut -d/ -f1)
+echo "📂 Extract original code..."
+tar -xf "${PKGNAME}_${VERSION}.orig.tar.xz"
+SRC_DIR_LIBNOTIFY=$(tar -tf "${PKGNAME}_${VERSION}.orig.tar.xz" | head -1 | cut -d/ -f1)
 
-#echo "📂 Extract debian files..."
-#tar -xf "${PKGNAME}_${VERSION}.debian.tar.xz" -C "$SRC_DIR_LIBNOTIFY"
+echo "📂 Extract debian files..."
+tar -xf "${PKGNAME}_${VERSION}.debian.tar.xz" -C "$SRC_DIR_LIBNOTIFY"
 
-#echo "Apply patch..."
-#cd ${BUILD_DIR}/libnotify/$SRC_DIR_LIBNOTIFY/
-#patch -p1 < ${ROOT}/patches/libnotify/notification.c.diff
+echo "Apply patch..."
+cd ${BUILD_DIR}/libnotify/$SRC_DIR_LIBNOTIFY/
+patch -p1 < ${ROOT}/patches/libnotify/notification.c.diff
 
-#EDITOR=true dpkg-source --commit . ut-notif
-#DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
+EDITOR=true dpkg-source --commit . ut-notif
+DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 
 # ==============================
@@ -262,8 +262,8 @@ cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/o
 echo "Copying maliit-input-context..."
 cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
 
-#echo "Copying libnotify"
-#cp ${BUILD_DIR}/libnotify/libnotify-0.8.3/obj-aarch64-linux-gnu/libnotify/* $INSTALL_DIR/lib/aarch64-linux-gnu/ || true
+echo "Copying libnotify"
+cp ${BUILD_DIR}/libnotify/libnotify-0.8.3/obj-aarch64-linux-gnu/libnotify/* $INSTALL_DIR/lib/aarch64-linux-gnu/ || true
 
 echo "Copying logos..."
 cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"
