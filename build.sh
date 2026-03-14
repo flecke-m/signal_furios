@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e  # Exit immediately on error
+
+# Set defaults if not provided
+ROOT=${ROOT:-$(pwd)}
+BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
+
 if [ "$UNCONFINED" = "true" ]; then
 echo "WARNING: building unconfined!"
 fi
