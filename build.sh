@@ -9,7 +9,7 @@ lsb_release -a
 # ========================
 # PROJECT CONFIGURATION
 # ========================
-PROJECT_NAME="signalut"
+PROJECT_NAME="signalfurios"
 INSTALL_DIR="${BUILD_DIR}/install"
 
 # ========================
@@ -270,15 +270,15 @@ cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"
 cp ${BUILD_DIR}/icon-splash.png "$INSTALL_DIR/"
 
 echo "Copying app files..."
-cp ${ROOT}/signalut.desktop "$INSTALL_DIR/"
+cp ${ROOT}/signalfurios.desktop "$INSTALL_DIR/"
 cp ${ROOT}/manifest.json "$INSTALL_DIR/"
 cp ${ROOT}/content-hub.json "$INSTALL_DIR/"
-cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
+cp ${ROOT}/signalfurios.apparmor "$INSTALL_DIR/"
 cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
 cp ${ROOT}/pushexec "$INSTALL_DIR/"
 cp ${ROOT}/push-apparmor.json "$INSTALL_DIR/"
-cp ${ROOT}/signalut-push.apparmor "$INSTALL_DIR/"
-cp ${ROOT}/signalut-push-helper.json "$INSTALL_DIR/"
+cp ${ROOT}/signalfurios-push.apparmor "$INSTALL_DIR/"
+cp ${ROOT}/signalfurios-push-helper.json "$INSTALL_DIR/"
 
 echo "Copying utils..."
 mkdir -p "$INSTALL_DIR/utils/"
