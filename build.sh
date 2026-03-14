@@ -20,7 +20,7 @@ cd ${BUILD_DIR}
 if [ ! -e "Signal-Desktop" ]; then
     git clone https://github.com/signalapp/Signal-Desktop.git
 fi
-cd ${BUILD_DIR}/Signal-Desktop
+cd Signal-Desktop
 git pull
 git checkout 8.2.x
 
