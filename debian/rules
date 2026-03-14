@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	mkdir -p build
+	export BUILD_DIR=$(CURDIR)/build
+	export ROOT=$(CURDIR)
+	./build.sh
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir -p debian/signalut
+	cp -r build/install/* debian/signalut/

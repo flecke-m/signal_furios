@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: signalut
+Source: https://github.com/signalapp/Signal-Desktop
+
+Files: *
+Copyright: Signal Messenger, LLC
+License: GPL-3+
+
+Files: signalut/*
+Copyright: 2026 Pierre Parent <pro@pierre-parent.fr>
+License: GPL-3+
+
+Files: debian/*
+Copyright: 2026 Matthias Fleckenstein <internet@fleckenstein-cloud.de>
+License: GPL-3+
+

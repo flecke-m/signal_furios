@@ -1,0 +1,5 @@
+signalut (8.20-1) unstable; urgency=medium
+
+  * Initial Debian package
+
+ -- Matthias Fleckenstein <internet@fleckenstein-cloud.de>  Sat, 14 Mar 2026 00:00:00 +0000

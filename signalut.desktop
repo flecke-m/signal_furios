@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Signal UT
+Name=Signal FuriOS
 Comment=Signal UT Launcher
 Exec=./launcher.sh
 Terminal=false
