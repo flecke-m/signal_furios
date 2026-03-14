@@ -26,7 +26,7 @@ MainView {
     
     UploadHelper {
         id: uploadHelper
-        blob_path: "/home/phablet/.cache/signalut.pparent/downloads/"
+        blob_path: "/home/furios/.cache/signalut.pparent/downloads/"
     }  
     Timer {
         id: timerquit
