@@ -76,10 +76,10 @@ echo "[3/10] Building Signal-Desktop..."
     export PATH="$HOME/.local/share/pnpm:$PATH"
     pnpm -v
   
-    #pre-install X64 packages
-    pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
+    #pre-install packages
+    # pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
   
-    export npm_config_arch=amd64
+    export npm_config_arch=arm64
     export npm_config_target_arch=arm64
     export npm_config_target_platform=linux
     export ESBUILD_ARCH=arm64
