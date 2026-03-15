@@ -72,6 +72,7 @@ echo "[3/10] Building Signal-Desktop..."
  if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     curl -fsSL https://get.pnpm.io/install.sh | env SHELL=bash sh -
     # source ${BUILD_DIR}/.clickable/home/.bashrc
+    source ~/.bashrc
     pnpm -v
   
     #pre-install X64 packages

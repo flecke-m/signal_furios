@@ -41,8 +41,7 @@ To build a Debian package for arm64 (compatible with Debian 13 Trixie and simila
 3. Build the Debian package:
 
    ```bash
-   dpkg-buildpackage -us -uc -a arm64
-   ONFIG_SITE=/etc/dpkg-cross/cross-config.arm64     DEB_BUILD_OPTIONS=nocheck     dpkg-buildpackage --host-arch amd64 -Pcross,nocheck
+   dpkg-buildpackage -us -uc -a arm64 --no-check-builddeps
 
    ```
 
