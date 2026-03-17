@@ -332,7 +332,6 @@ chmod +x $DEB_LIB_DIR/mkdir.sh
 chmod +x $DEB_LIB_DIR/get-scale.sh
 chmod +x $DEB_LIB_DIR/filedialog-deamon.sh
 chmod +x $DEB_OPT_DIR/launcher.sh
-chmod +x $DEB_OPT_DIR/pushexec
 chmod +x $DEB_OPT_DIR/signal-desktop
 chmod +x $DEB_OPT_DIR/chrome_crashpad_handler
 
