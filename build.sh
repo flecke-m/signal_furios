@@ -303,7 +303,7 @@ cp ${ROOT}/utils/mkdir.sh "$DEB_LIB_DIR/"
 cp ${ROOT}/utils/get-scale.sh "$DEB_LIB_DIR/"
 cp ${ROOT}/utils/filedialog-deamon.sh "$DEB_LIB_DIR/"
 mkdir -p "$DEB_BIN_DIR"
-cp ${BUILD_DIR}/xdg-open/build/xdg-open $DEB_BIN_DIR/
+cp ${BUILD_DIR}/xdg-open/build/xdg-open $DEB_LIB_DIR/
 mkdir $DEB_LIB_DIR/download-helper/
 cp -r ${BUILD_DIR}/download-helper/qml $DEB_LIB_DIR/download-helper/
 
@@ -331,6 +331,7 @@ chmod +x $DEB_LIB_DIR/sleep.sh
 chmod +x $DEB_LIB_DIR/mkdir.sh
 chmod +x $DEB_LIB_DIR/get-scale.sh
 chmod +x $DEB_LIB_DIR/filedialog-deamon.sh
+chmod +x $DEB_LIB_DIR/xdg-open
 chmod +x $DEB_OPT_DIR/launcher.sh
 chmod +x $DEB_OPT_DIR/signal-desktop
 chmod +x $DEB_OPT_DIR/chrome_crashpad_handler
