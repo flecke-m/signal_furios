@@ -17,4 +17,7 @@ override_dh_auto_install:
 	cp -r build/install/* debian/signalfurios/
 
 override_dh_dwz:
-	
+
+override_dh_strip:
+	# Skip stripping for cross-compilation (we're building arm64 on x86_64)
+	# dh_strip
