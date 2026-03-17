@@ -17,6 +17,14 @@ lsb_release -a
 PROJECT_NAME="signalfurios"
 INSTALL_DIR="${BUILD_DIR}/install"
 
+# Debian package directories
+DEB_OPT_DIR="${INSTALL_DIR}/opt/signalfurios"
+DEB_BIN_DIR="${INSTALL_DIR}/usr/bin"
+DEB_LIB_DIR="${INSTALL_DIR}/usr/lib/signalfurios"
+DEB_SHARE_DIR="${INSTALL_DIR}/usr/share"
+DEB_APPLICATIONS_DIR="${DEB_SHARE_DIR}/applications"
+DEB_ICONS_DIR="${DEB_SHARE_DIR}/icons/hicolor/512x512/apps"
+
 # ========================
 # STEP 1: CLONE SIGNAL-DESKTOP
 # ========================
@@ -268,8 +276,8 @@ echo "Copying dependencies..."
 # cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
 
 echo "Copying signal-desktop..."
-mkdir -p "$INSTALL_DIR/opt/Signal"
-cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/opt/Signal/" || true
+mkdir -p "$DEB_OPT_DIR"
+cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$DEB_OPT_DIR/" || true
 
 echo "Copying maliit-input-context..."
 # Skipped for Debian
@@ -279,60 +287,62 @@ echo "Copying maliit-input-context..."
 #cp ${BUILD_DIR}/libnotify/libnotify-0.8.3/obj-aarch64-linux-gnu/libnotify/* $INSTALL_DIR/lib/aarch64-linux-gnu/ || true
 
 echo "Copying logos..."
-cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"
-cp ${BUILD_DIR}/icon-splash.png "$INSTALL_DIR/"
+mkdir -p "$DEB_ICONS_DIR"
+cp ${BUILD_DIR}/icon.png "$DEB_ICONS_DIR/signalfurios.png"
+cp ${BUILD_DIR}/icon-splash.png "$DEB_ICONS_DIR/signalfurios-splash.png"
 
 echo "Copying app files..."
-cp ${ROOT}/signalfurios.desktop "$INSTALL_DIR/"
-cp ${ROOT}/manifest.json "$INSTALL_DIR/"
-cp ${ROOT}/content-hub.json "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios.apparmor "$INSTALL_DIR/"
-cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
-cp ${ROOT}/pushexec "$INSTALL_DIR/"
-cp ${ROOT}/push-apparmor.json "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios-push.apparmor "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios-push-helper.json "$INSTALL_DIR/"
+mkdir -p "$DEB_APPLICATIONS_DIR"
+cp ${ROOT}/signalfurios.desktop "$DEB_APPLICATIONS_DIR/"
+cp ${ROOT}/manifest.json "$DEB_OPT_DIR/"
+cp ${ROOT}/content-hub.json "$DEB_OPT_DIR/"
+cp ${ROOT}/signalfurios.apparmor "$DEB_OPT_DIR/"
+cp ${ROOT}/launcher.sh "$DEB_OPT_DIR/"
+cp ${ROOT}/pushexec "$DEB_OPT_DIR/"
+cp ${ROOT}/push-apparmor.json "$DEB_OPT_DIR/"
+cp ${ROOT}/signalfurios-push.apparmor "$DEB_OPT_DIR/"
+cp ${ROOT}/signalfurios-push-helper.json "$DEB_OPT_DIR/"
 
 echo "Copying utils..."
-mkdir -p "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/rm.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
-mkdir -p "$INSTALL_DIR/bin"
-cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
-mkdir $INSTALL_DIR/utils/download-helper/
-cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
+mkdir -p "$DEB_LIB_DIR"
+cp ${ROOT}/utils/rm.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/sleep.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/mkdir.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/get-scale.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/filedialog-deamon.sh "$DEB_LIB_DIR/"
+mkdir -p "$DEB_BIN_DIR"
+cp ${BUILD_DIR}/xdg-open/build/xdg-open $DEB_BIN_DIR/
+mkdir $DEB_LIB_DIR/download-helper/
+cp -r ${BUILD_DIR}/download-helper/qml $DEB_LIB_DIR/download-helper/
 
-mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
-cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
-cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
+mkdir -p $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper
+cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper/
+cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper/
 
-mkdir $INSTALL_DIR/utils/upload-helper/
-cp -r ${BUILD_DIR}/upload-helper/qml $INSTALL_DIR/utils/upload-helper/
-mkdir -p $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper
-cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/build/libUploadHelperPlugin.so $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
-cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/qmldir $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
+mkdir $DEB_LIB_DIR/upload-helper/
+cp -r ${BUILD_DIR}/upload-helper/qml $DEB_LIB_DIR/upload-helper/
+mkdir -p $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/build/libUploadHelperPlugin.so $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper/
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/qmldir $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper/
 
 
-mkdir -p $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/ || true
-cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
-cp ${BUILD_DIR}/mic-permission-requester/AudioModule/qmldir $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
+mkdir -p $DEB_LIB_DIR/mic-permission-requester/AudioWriter/ || true
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $DEB_LIB_DIR/mic-permission-requester/AudioWriter/
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/qmldir $DEB_LIB_DIR/mic-permission-requester/AudioWriter/
 
-cp -r ${ROOT}/utils/mic-permission-requester "$INSTALL_DIR/utils/"
-cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/utils/mic-permission-requester/"
+cp -r ${ROOT}/utils/mic-permission-requester "$DEB_LIB_DIR/"
+cp ${BUILD_DIR}/icon.png "$DEB_LIB_DIR/mic-permission-requester/"
 
 echo "Make binaries executable..."
-chmod +x $INSTALL_DIR/utils/rm.sh
-chmod +x $INSTALL_DIR/utils/sleep.sh
-chmod +x $INSTALL_DIR/utils/mkdir.sh
-chmod +x $INSTALL_DIR/utils/get-scale.sh
-chmod +x $INSTALL_DIR/utils/filedialog-deamon.sh
-chmod +x $INSTALL_DIR/launcher.sh
-chmod +x $INSTALL_DIR/pushexec
-chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
-chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
+chmod +x $DEB_LIB_DIR/rm.sh
+chmod +x $DEB_LIB_DIR/sleep.sh
+chmod +x $DEB_LIB_DIR/mkdir.sh
+chmod +x $DEB_LIB_DIR/get-scale.sh
+chmod +x $DEB_LIB_DIR/filedialog-deamon.sh
+chmod +x $DEB_OPT_DIR/launcher.sh
+chmod +x $DEB_OPT_DIR/pushexec
+chmod +x $DEB_OPT_DIR/signal-desktop
+chmod +x $DEB_OPT_DIR/chrome_crashpad_handler
 
 
 # ========================
