@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Signal FuriOS
+Comment=Signal Desktop for FuriOS with responsive design
+Exec=/opt/signalfurios/launcher.sh
+Terminal=false
+Type=Application
+Icon=signalfurios
+Categories=Network;InstantMessaging;
+Keywords=signal;messenger;chat;sms;
+
+Name[en_US]=Signal

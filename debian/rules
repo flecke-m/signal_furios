@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=-all
+
 %:
 	dh $@
 
@@ -13,3 +15,16 @@ override_dh_auto_install:
 	dh_auto_install
 	mkdir -p debian/signalfurios
 	cp -r build/install/* debian/signalfurios/
+
+override_dh_dwz:
+
+override_dh_strip:
+	# Skip stripping for cross-compilation (we're building arm64 on x86_64)
+	# dh_strip
+
+override_dh_shlibdeps:
+	# Skip shlibdeps for cross-compilation (we're building arm64 on x86_64)
+	# dh_shlibdeps
+	# Skip library dependency checking for cross-compilation
+	# Applications are bundled with their own libraries in /opt/Signal
+	dh_shlibdeps -- -xdebian/signalfurios || true

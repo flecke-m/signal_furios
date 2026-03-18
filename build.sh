@@ -17,6 +17,14 @@ lsb_release -a
 PROJECT_NAME="signalfurios"
 INSTALL_DIR="${BUILD_DIR}/install"
 
+# Debian package directories
+DEB_OPT_DIR="${INSTALL_DIR}/opt/signalfurios"
+DEB_BIN_DIR="${INSTALL_DIR}/usr/bin"
+DEB_LIB_DIR="${INSTALL_DIR}/usr/lib/signalfurios"
+DEB_SHARE_DIR="${INSTALL_DIR}/usr/share"
+DEB_APPLICATIONS_DIR="${DEB_SHARE_DIR}/applications"
+DEB_ICONS_DIR="${DEB_SHARE_DIR}/icons/hicolor/512x512/apps"
+
 # ========================
 # STEP 1: CLONE SIGNAL-DESKTOP
 # ========================
@@ -71,13 +79,14 @@ echo "[3/10] Building Signal-Desktop..."
 
  if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     curl -fsSL https://get.pnpm.io/install.sh | env SHELL=bash sh -
-    # source ${BUILD_DIR}/.clickable/home/.bashrc
+    source ~/.bashrc
+    export PATH="$HOME/.local/share/pnpm:$PATH"
     pnpm -v
   
-    #pre-install X64 packages
-    pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
+    #pre-install packages
+    # pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
   
-    export npm_config_arch=amd64
+    export npm_config_arch=arm64
     export npm_config_target_arch=arm64
     export npm_config_target_platform=linux
     export ESBUILD_ARCH=arm64
@@ -118,7 +127,7 @@ cp -r ${ROOT}/utils/xdg-open/ ${BUILD_DIR}/
 cd ${BUILD_DIR}/xdg-open/
 mkdir -p build
 cd build
-cmake ..
+cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/aarch64-linux-gnu/cmake
 make
 
 # ===================================
@@ -130,7 +139,7 @@ cp -r ${ROOT}/utils/download-helper/ ${BUILD_DIR}/download-helper
 cd ${BUILD_DIR}/download-helper/qml-download-helper-module/
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/aarch64-linux-gnu/cmake
 cmake --build .
 
 rm -rvf ${BUILD_DIR}/upload-helper
@@ -138,7 +147,7 @@ cp -r ${ROOT}/utils/upload-helper/ ${BUILD_DIR}/upload-helper
 cd ${BUILD_DIR}/upload-helper/qml-upload-helper-module/
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/aarch64-linux-gnu/cmake
 cmake --build .
 
 rm -rvf ${BUILD_DIR}/mic-permission-requester/
@@ -146,7 +155,7 @@ cp -r ${ROOT}/utils/mic-permission-requester/ ${BUILD_DIR}/mic-permission-reques
 cd ${BUILD_DIR}/mic-permission-requester/AudioModule/
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/aarch64-linux-gnu/cmake
 cmake --build .
 
 
@@ -155,55 +164,57 @@ cmake --build .
 # =================================================
 echo "[7/10] Install dependencies..."
 
-cd ${BUILD_DIR}
-DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils"
+# Skipped for Debian package, dependencies are system packages
+# cd ${BUILD_DIR}
+# DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils"
 
-for dep in $DEPENDENCIES ; do
-    apt download $dep:arm64
-    mv ${dep}_*.deb ${dep}.deb
-    rm -rvf "${dep}.deb_extract_chsdjksd" || true
-    mkdir "${dep}.deb_extract_chsdjksd"
-    dpkg-deb -x "${dep}.deb" "${dep}.deb_extract_chsdjksd"
-done
+# for dep in $DEPENDENCIES ; do
+#     apt download $dep:arm64
+#     mv ${dep}_*.deb ${dep}.deb
+#     rm -rvf "${dep}.deb_extract_chsdjksd" || true
+#     mkdir "${dep}.deb_extract_chsdjksd"
+#     dpkg-deb -x "${dep}.deb" "${dep}.deb_extract_chsdjksd"
+# done
 
 # =================================================
 # STEP 8: Downloading maliit-inputcontext-gtk3
 # =================================================
 echo "[8/11] Building maliit-inputcontext-gtk3..."
 
-cd ${BUILD_DIR}
+# Skipped for Debian, use system maliit
+# cd ${BUILD_DIR}
 
-PKGNAME="maliit-inputcontext-gtk"
-VERSION_MALIIT="0.99.1+git20151116.72d7576"
-ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
-DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
+# PKGNAME="maliit-inputcontext-gtk"
+# VERSION_MALIIT="0.99.1+git20151116.72d7576"
+# ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
+# DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
 
 
 
-WORKDIR_MALIIT="${BUILD_DIR}/${PKGNAME}-${VERSION_MALIIT}"
-rm -rvf $WORKDIR_MALIIT/ || true
-mkdir -p "$WORKDIR_MALIIT"
-cd "$WORKDIR_MALIIT"
+# WORKDIR_MALIIT="${BUILD_DIR}/${PKGNAME}-${VERSION_MALIIT}"
+# rm -rvf $WORKDIR_MALIIT/ || true
+# mkdir -p "$WORKDIR_MALIIT"
+# cd "$WORKDIR_MALIIT"
 
-echo "📦 Download sources..."
-wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
-wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz"
+# echo "📦 Download sources..."
+# wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
+# wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz"
 
-echo "📂 Extract original code..."
-tar -xf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
-SRC_DIR_MALIIT=$(tar -tf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz" | head -1 | cut -d/ -f1)
+# echo "📂 Extract original code..."
+# tar -xf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
+# SRC_DIR_MALIIT=$(tar -tf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz" | head -1 | cut -d/ -f1)
 
-echo "📂 Extract debian files..."
-tar -xf "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz" -C "$SRC_DIR_MALIIT"
+# echo "📂 Extract debian files..."
+# tar -xf "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz" -C "$SRC_DIR_MALIIT"
 
-echo "Apply patch..."
-cd ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/
-patch ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/gtk-input-context/client-gtk/client-imcontext-gtk.c  ${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch
-echo "${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch"
+# echo "Apply patch..."
+# cd ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/
+# patch ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/gtk-input-context/client-gtk/client-imcontext-gtk.c  ${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch
+# echo "${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch"
 
-echo "Compile..."
-EDITOR=true dpkg-source --commit . fix-keyboard
-DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
+# echo "Compile..."
+# EDITOR=true dpkg-source --commit . fix-keyboard
+# DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 # =================================================
 # STEP 9: Build libnotify  -> commenting out to have normal libnotify.
@@ -245,94 +256,92 @@ echo "[10/11] Copying files..."
 
 
 echo "Copying dependencies..."
-cd ${BUILD_DIR}
-# Copie des fichiers du dossier /lib/ de chaque paquet
-rm -rvf $INSTALL_DIR/lib
-mkdir -p "$INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/"
-for DIR in *_extract_chsdjksd; do
-    if [ -d "$DIR/usr/lib/aarch64-linux-gnu/" ]; then
-        cp -r "$DIR/usr/lib/aarch64-linux-gnu/"* "$INSTALL_DIR/lib/aarch64-linux-gnu/"
-    fi
-done
+# Skipped for Debian
+# cd ${BUILD_DIR}
+# # Copie des fichiers du dossier /lib/ de chaque paquet
+# rm -rvf $INSTALL_DIR/lib
+# mkdir -p "$INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/"
+# for DIR in *_extract_chsdjksd; do
+#     if [ -d "$DIR/usr/lib/aarch64-linux-gnu/" ]; then
+#         cp -r "$DIR/usr/lib/aarch64-linux-gnu/"* "$INSTALL_DIR/lib/aarch64-linux-gnu/"
+#     fi
+# done
 
-# Copy binaries in bin/
-mkdir -p "$INSTALL_DIR/bin"
-cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
-cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
-cp *_extract_chsdjksd/usr/bin/xprop "$INSTALL_DIR/bin/"
-cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
+# # Copy binaries in bin/
+# mkdir -p "$INSTALL_DIR/bin"
+# cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
+# cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
+# cp *_extract_chsdjksd/usr/bin/xprop "$INSTALL_DIR/bin/"
+# cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
 
 echo "Copying signal-desktop..."
-mkdir -p "$INSTALL_DIR/opt/Signal"
-cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/opt/Signal/" || true
+mkdir -p "$DEB_OPT_DIR"
+cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$DEB_OPT_DIR/" || true
 
 echo "Copying maliit-input-context..."
-cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+# Skipped for Debian
+# cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
 
 #echo "Copying libnotify"
 #cp ${BUILD_DIR}/libnotify/libnotify-0.8.3/obj-aarch64-linux-gnu/libnotify/* $INSTALL_DIR/lib/aarch64-linux-gnu/ || true
 
 echo "Copying logos..."
-cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"
-cp ${BUILD_DIR}/icon-splash.png "$INSTALL_DIR/"
+mkdir -p "$DEB_ICONS_DIR"
+cp ${BUILD_DIR}/icon.png "$DEB_ICONS_DIR/signalfurios.png"
+cp ${BUILD_DIR}/icon-splash.png "$DEB_ICONS_DIR/signalfurios-splash.png"
 
 echo "Copying app files..."
-cp ${ROOT}/signalfurios.desktop "$INSTALL_DIR/"
-cp ${ROOT}/manifest.json "$INSTALL_DIR/"
-cp ${ROOT}/content-hub.json "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios.apparmor "$INSTALL_DIR/"
-cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
-cp ${ROOT}/pushexec "$INSTALL_DIR/"
-cp ${ROOT}/push-apparmor.json "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios-push.apparmor "$INSTALL_DIR/"
-cp ${ROOT}/signalfurios-push-helper.json "$INSTALL_DIR/"
+mkdir -p "$DEB_APPLICATIONS_DIR"
+cp ${ROOT}/signalfurios.desktop "$DEB_APPLICATIONS_DIR/"
+cp ${ROOT}/launcher.sh "$DEB_OPT_DIR/"
 
 echo "Copying utils..."
-mkdir -p "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/rm.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
-cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
-mkdir $INSTALL_DIR/utils/download-helper/
-cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
+mkdir -p "$DEB_LIB_DIR"
+cp ${ROOT}/utils/rm.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/sleep.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/mkdir.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/get-scale.sh "$DEB_LIB_DIR/"
+cp ${ROOT}/utils/filedialog-deamon.sh "$DEB_LIB_DIR/"
+mkdir -p "$DEB_BIN_DIR"
+cp ${BUILD_DIR}/xdg-open/build/xdg-open $DEB_LIB_DIR/
+mkdir $DEB_LIB_DIR/download-helper/
+cp -r ${BUILD_DIR}/download-helper/qml $DEB_LIB_DIR/download-helper/
 
-mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
-cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
-cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
+mkdir -p $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper
+cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper/
+cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $DEB_LIB_DIR/download-helper/Pparent/DownloadHelper/
 
-mkdir $INSTALL_DIR/utils/upload-helper/
-cp -r ${BUILD_DIR}/upload-helper/qml $INSTALL_DIR/utils/upload-helper/
-mkdir -p $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper
-cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/build/libUploadHelperPlugin.so $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
-cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/qmldir $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
+mkdir $DEB_LIB_DIR/upload-helper/
+cp -r ${BUILD_DIR}/upload-helper/qml $DEB_LIB_DIR/upload-helper/
+mkdir -p $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/build/libUploadHelperPlugin.so $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper/
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/qmldir $DEB_LIB_DIR/upload-helper/Pparent/UploadHelper/
 
 
-mkdir -p $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/ || true
-cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
-cp ${BUILD_DIR}/mic-permission-requester/AudioModule/qmldir $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
+mkdir -p $DEB_LIB_DIR/mic-permission-requester/AudioWriter/ || true
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $DEB_LIB_DIR/mic-permission-requester/AudioWriter/
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/qmldir $DEB_LIB_DIR/mic-permission-requester/AudioWriter/
 
-cp -r ${ROOT}/utils/mic-permission-requester "$INSTALL_DIR/utils/"
-cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/utils/mic-permission-requester/"
+cp -r ${ROOT}/utils/mic-permission-requester "$DEB_LIB_DIR/"
+cp ${BUILD_DIR}/icon.png "$DEB_LIB_DIR/mic-permission-requester/"
 
 echo "Make binaries executable..."
-chmod +x $INSTALL_DIR/utils/rm.sh
-chmod +x $INSTALL_DIR/utils/sleep.sh
-chmod +x $INSTALL_DIR/utils/mkdir.sh
-chmod +x $INSTALL_DIR/utils/get-scale.sh
-chmod +x $INSTALL_DIR/utils/filedialog-deamon.sh
-chmod +x $INSTALL_DIR/launcher.sh
-chmod +x $INSTALL_DIR/pushexec
-chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
-chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
+chmod +x $DEB_LIB_DIR/rm.sh
+chmod +x $DEB_LIB_DIR/sleep.sh
+chmod +x $DEB_LIB_DIR/mkdir.sh
+chmod +x $DEB_LIB_DIR/get-scale.sh
+chmod +x $DEB_LIB_DIR/filedialog-deamon.sh
+chmod +x $DEB_LIB_DIR/xdg-open
+chmod +x $DEB_OPT_DIR/launcher.sh
+chmod +x $DEB_OPT_DIR/signal-desktop
+chmod +x $DEB_OPT_DIR/chrome_crashpad_handler
 
 
 # ========================
-# STEP 11: BUILD THE CLICK PACKAGE
+# STEP 11: BUILD THE DEBIAN PACKAGE
 # ========================
-echo "[11/11] Building click package..."
-# click build "$INSTALL_DIR"
+echo "[11/11] Building Debian package..."
+# dpkg-buildpackage -us -uc
 
-echo "✅ Preparation done, building the .click package."
+echo "✅ Preparation done, building the .deb package."
  
