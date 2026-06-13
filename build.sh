@@ -61,14 +61,14 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     # fi
     
     # Only add our fs-extra patch if Signal does not already ship one (Signal >= 8.14.0 includes it natively)
-    if [ ! -e "patches/fs-extra+11.2.0.patch" ]; then
-        echo "Add fs-extra+11.2.0.patch patches"
-        cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.2.0.patch patches/
+    if [ ! -e "patches/fs-extra+11.3.4.patch" ]; then
+        echo "Add fs-extra+11.3.4.patch patches"
+        cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch patches/
 
         echo "Ajust package.json"
-        cat package.json | jq -r --arg fs_extra patches/fs-extra+11.2.0.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
+        cat package.json | jq -r --arg fs_extra patches/fs-extra+11.3.4.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
     else
-        echo "Skipping fs-extra patch copy: Signal already ships patches/fs-extra+11.2.0.patch"
+        echo "Skipping fs-extra patch copy: Signal already ships patches/fs-extra+11.3.4.patch"
     fi
     
     #Patch to make the app responsive
