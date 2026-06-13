@@ -7,9 +7,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
 override_dh_auto_build:
 	mkdir -p build
-	export BUILD_DIR=$(CURDIR)/build
-	export ROOT=$(CURDIR)
-	./build.sh
+	BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh
 
 override_dh_auto_install:
 	dh_auto_install
