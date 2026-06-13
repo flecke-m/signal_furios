@@ -10,7 +10,9 @@ override_dh_auto_build:
 	BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh
 
 override_dh_auto_install:
-	dh_auto_install
+	# If the build stage was skipped (cross-compilation on amd64 building arm64),
+	# run build.sh here before installing.
+	test -d build/install || (mkdir -p build && BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh)
 	mkdir -p debian/signalfurios
 	cp -r build/install/* debian/signalfurios/
 
