@@ -138,7 +138,16 @@ echo "[3/10] Building Signal-Desktop..."
     pnpm install --ignore-scripts
     pnpm run build
     cd ..
-    pnpm run generate
+
+    # pnpm run generate (build:db-schema) imports @signalapp/sqlcipher at runtime
+    # to inspect the DB schema. node-gyp-build picks the prebuild based on
+    # npm_config_arch. Unset it here so node-gyp-build falls back to process.arch
+    # (x64) and loads the linux-x64 prebuild, which works natively on the build
+    # host. The generate step only produces schema files; target arch doesn't matter.
+    (
+      unset npm_config_arch npm_config_target_arch npm_config_runtime npm_config_target npm_config_disturl
+      pnpm run generate
+    )
        
     echo "Build Signal"
     # This is the equivalent of 'npm run build-linux' with some adjustments
