@@ -15,6 +15,7 @@ lsb_release -a
 # PROJECT CONFIGURATION
 # ========================
 PROJECT_NAME="signalfurios"
+SIGNAL_VERSION="8.14.0"
 INSTALL_DIR="${BUILD_DIR}/install"
 
 # Debian package directories
@@ -26,16 +27,22 @@ DEB_APPLICATIONS_DIR="${DEB_SHARE_DIR}/applications"
 DEB_ICONS_DIR="${DEB_SHARE_DIR}/icons/hicolor/512x512/apps"
 
 # ========================
-# STEP 1: CLONE SIGNAL-DESKTOP
+# STEP 1: DOWNLOAD SIGNAL-DESKTOP
 # ========================
-echo "[1/10] Clone Signal-Desktop github"
+echo "[1/10] Download Signal-Desktop v${SIGNAL_VERSION}"
+SIGNAL_TARBALL="${BUILD_DIR}/Signal-Desktop-${SIGNAL_VERSION}.tar.gz"
 cd ${BUILD_DIR}
 if [ ! -e "Signal-Desktop" ]; then
-    git clone https://github.com/signalapp/Signal-Desktop.git
+    if [ ! -e "${SIGNAL_TARBALL}" ]; then
+        echo "Downloading Signal-Desktop v${SIGNAL_VERSION}..."
+        curl -fSL# "https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v${SIGNAL_VERSION}.tar.gz" \
+            -o "${SIGNAL_TARBALL}"
+    fi
+    echo "Extracting Signal-Desktop v${SIGNAL_VERSION}..."
+    tar -xzf "${SIGNAL_TARBALL}"
+    mv "Signal-Desktop-${SIGNAL_VERSION}" Signal-Desktop
 fi
 cd Signal-Desktop
-git pull
-git checkout 8.2.x
 
 # ========================
 # STEP 2: APPLY PATCHES
@@ -46,7 +53,7 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
 
     #Patch to build for arm64
     
-    # Commented out for 8.2.x
+    # Commented out for 8.14.x
     # if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
     #     echo "Apply bump_electronbuilder_version.patch"
     #     git apply ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
@@ -60,7 +67,7 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     cat package.json | jq -r --arg fs_extra patches/fs-extra+11.2.0.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
     
     #Patch to make the app responsive
-    # Commented out for 8.2.x
+    # Commented out for 8.14.x
     # if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
     #     echo "Apply fix-inject-responsive.patch"
     #     git apply ${ROOT}/patches/Signal-Desktop/inject_js_responsive.patch
@@ -93,7 +100,6 @@ echo "[3/10] Building Signal-Desktop..."
     export SIGNAL_ENV=release
     
     echo "Install"
-    sleep 5
     pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
     
     cd sticker-creator
@@ -103,7 +109,6 @@ echo "[3/10] Building Signal-Desktop..."
     pnpm run generate
        
     echo "Build Signal"
-    sleep 5;
     # This is the equivalent of 'npm run build-linux' with some adjustments
     pnpm run build:esbuild:prod 
     pnpm run build:release --arm64 --publish=never --linux deb
