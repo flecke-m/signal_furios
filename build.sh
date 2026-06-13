@@ -107,6 +107,13 @@ echo "[3/10] Building Signal-Desktop..."
     export npm_config_target_platform=linux
     export ESBUILD_ARCH=arm64
     export SIGNAL_ENV=release
+    # Tell node-gyp-build to use Electron prebuilds (not system Node prebuilds).
+    # Without this, @signalapp/sqlcipher's install script can't find its ARM64 prebuild.
+    ELECTRON_VERSION=$(node -e "const p=require('./package.json'); console.log((p.devDependencies?.electron||'').replace(/[^0-9.]/g,''))")
+    export npm_config_runtime=electron
+    export npm_config_target=${ELECTRON_VERSION}
+    export npm_config_disturl=https://electronjs.org/headers
+    echo "Electron version: ${ELECTRON_VERSION}"
     
     echo "Install"
     pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
