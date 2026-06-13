@@ -1,5 +1,11 @@
 #!/usr/bin/make -f
 
+# Force arm64 as the target: this package cross-compiles Signal for arm64 on an amd64 host.
+# Without this, dpkg-buildpackage silently skips the binary build when host arch != arm64.
+export DEB_HOST_ARCH := arm64
+export DEB_HOST_GNU_TYPE := aarch64-linux-gnu
+export DEB_HOST_MULTIARCH := aarch64-linux-gnu
+
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
 %:
