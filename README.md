@@ -39,7 +39,7 @@ To build a Debian package for arm64 (compatible with Debian 13 Trixie and simila
    - Run the build.sh script to compile Signal Desktop and additional components
    - Package everything into a .deb file in the parent directory
 
-4. The resulting package will be `signalfurios_8.20-1_arm64.deb` (version may vary).
+4. The resulting package will be `signalfurios_8.14.0-1_arm64.deb` (version may vary).
 
 **Note:** Building requires cross-compilation for arm64, so qemu-user-static is used. Ensure your system supports it.
 
