@@ -15,7 +15,7 @@ binary binary-arch:
 	rm -rf debian/signalfurios
 	cp -r build/install debian/signalfurios
 	mkdir -p debian/signalfurios/DEBIAN
-	dpkg-gencontrol -psignalfurios -Pdebian/signalfurios
+	dpkg-gencontrol -psignalfurios -Pdebian/signalfurios -aarm64
 	dpkg-deb --root-owner-group --build debian/signalfurios ..
 
 binary-indep:
