@@ -1,4 +1,11 @@
-signalfurios (8.20-1) unstable; urgency=medium
+signalfurios (8.14.0-1) unstable; urgency=medium
+
+  * Update to Signal Desktop 8.14.0
+  * Switch from git clone to tarball download
+
+ -- Matthias Fleckenstein <internet@fleckenstein-cloud.de>  Fri, 13 Jun 2026 00:00:00 +0000
+
+signalfurios (8.14-1) unstable; urgency=medium
 
   * Initial Debian package
 
