@@ -84,35 +84,24 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     echo "Add responsive.js"
     cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
 
-    # pnpm@10/11: migrate onlyBuiltDependencies from package.json to pnpm-workspace.yaml.
-    # pnpm@10+ ignores the "pnpm" field in package.json; these settings must be in
-    # pnpm-workspace.yaml. We move Signal's onlyBuiltDependencies allowlist there,
-    # but EXCLUDE @signalapp/sqlcipher and fs-xattr — their ARM64 prebuilt .node
-    # binaries can't be dlopen'd on the x86_64 build host. By keeping them out of
-    # the allowlist, pnpm skips their install scripts. The prebuilt binaries are
-    # already in the package directories and will be packaged by electron-builder.
-    python3 -c "
-import json
-
-pkg = json.load(open('package.json'))
-only_built = pkg.get('pnpm', {}).get('onlyBuiltDependencies', [])
-
-# Remove packages whose ARM64 prebuilds cannot be test-loaded on the x86_64 build host
-cross_skip = {'@signalapp/sqlcipher', 'fs-xattr'}
-filtered = [p for p in only_built if p not in cross_skip]
-
-content = open('pnpm-workspace.yaml').read().rstrip()
-lines = ['\n', '\n# Cross-compilation: onlyBuiltDependencies migrated from package.json pnpm field',
-         '\n# (pnpm@10+ ignores that field). ARM64-only native modules are excluded so',
-         '\n# pnpm does not try to test-load their prebuilts on the x86_64 build host.',
-         '\nonlyBuiltDependencies:']
-for p in filtered:
-    lines.append(f'\n  - \"{p}\"')
-
-with open('pnpm-workspace.yaml', 'w') as f:
-    f.write(content + ''.join(lines) + '\n')
-"
-    echo "Updated pnpm-workspace.yaml for cross-compilation"
+    # pnpm hook: use .pnpmfile.cjs to remove install scripts for ARM64-only
+    # native modules. These modules have prebuilt ARM64 .node binaries that
+    # cannot be dlopen'd on the x86_64 build host; node-gyp-build would fail
+    # trying to test-load them, then fall back to source compilation (which
+    # also fails — no binding.gyp). The prebuilts are already in the package
+    # directories and will be packaged correctly by electron-builder at runtime.
+    cat > .pnpmfile.cjs << 'EOF'
+'use strict';
+function readPackage(pkg) {
+  if (pkg.name === '@signalapp/sqlcipher' || pkg.name === 'fs-xattr') {
+    delete pkg.scripts.install;
+    delete pkg.scripts.postinstall;
+  }
+  return pkg;
+}
+module.exports = { hooks: { readPackage } };
+EOF
+    echo "Created .pnpmfile.cjs for cross-compilation"
     
 fi
 
