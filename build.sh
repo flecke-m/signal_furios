@@ -84,24 +84,8 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     echo "Add responsive.js"
     cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
 
-    # pnpm hook: use .pnpmfile.cjs to remove install scripts for ARM64-only
-    # native modules. These modules have prebuilt ARM64 .node binaries that
-    # cannot be dlopen'd on the x86_64 build host; node-gyp-build would fail
-    # trying to test-load them, then fall back to source compilation (which
-    # also fails — no binding.gyp). The prebuilts are already in the package
-    # directories and will be packaged correctly by electron-builder at runtime.
-    cat > .pnpmfile.cjs << 'EOF'
-'use strict';
-function readPackage(pkg) {
-  if (pkg.name === '@signalapp/sqlcipher' || pkg.name === 'fs-xattr') {
-    delete pkg.scripts.install;
-    delete pkg.scripts.postinstall;
-  }
-  return pkg;
-}
-module.exports = { hooks: { readPackage } };
-EOF
-    echo "Created .pnpmfile.cjs for cross-compilation"
+    # Clean up any stale pnpm hook from previous attempts.
+    rm -f .pnpmfile.cjs
     
 fi
 
@@ -134,14 +118,36 @@ echo "[3/10] Building Signal-Desktop..."
     export npm_config_disturl=https://electronjs.org/headers
     echo "Electron version: ${ELECTRON_VERSION}"
     
-    echo "Install"
-    pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
+    echo "Install (cross-compile: skip lifecycle scripts first)"
+    pnpm install --ignore-scripts --verbose --network-concurrency=1 --child-concurrency=1
+
+    # Run only the scripts Signal marks as required for build, excluding
+    # ARM64-only native modules that cannot be loaded on the x86_64 host.
+    pnpm rebuild \
+      @indutny/mac-screen-share \
+      @indutny/simple-windows-notifications \
+      @parcel/watcher \
+      @signalapp/libsignal-client \
+      @signalapp/ringrtc \
+      @signalapp/windows-ucv \
+      @swc/core \
+      @tailwindcss/oxide \
+      electron
     
     cd sticker-creator
-    pnpm install
+    pnpm install --ignore-scripts
     pnpm run build
     cd ..
-    pnpm run generate
+
+    # pnpm run generate (build:db-schema) imports @signalapp/sqlcipher at runtime
+    # to inspect the DB schema. node-gyp-build picks the prebuild based on
+    # npm_config_arch. Unset it here so node-gyp-build falls back to process.arch
+    # (x64) and loads the linux-x64 prebuild, which works natively on the build
+    # host. The generate step only produces schema files; target arch doesn't matter.
+    (
+      unset npm_config_arch npm_config_target_arch npm_config_runtime npm_config_target npm_config_disturl
+      pnpm run generate
+    )
        
     echo "Build Signal"
     # This is the equivalent of 'npm run build-linux' with some adjustments
