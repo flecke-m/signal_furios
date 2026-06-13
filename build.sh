@@ -60,15 +60,17 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     #     touch .bump_electronbuilder_version-applyed
     # fi
     
-    # Only add our fs-extra patch if Signal does not already ship one (Signal >= 8.14.0 includes it natively)
+    # Replace Signal's bundled fs-extra+11.2.0.patch with our +11.3.4 version.
+    # pnpm@10 reads patchedDependencies from pnpm-lock.yaml (not package.json),
+    # so we must NOT modify package.json — doing so caused pnpm to corrupt the
+    # lock file in previous builds (patching fs-extra@9.1.0 with a v11 patch).
+    # Just swap the patch file; pnpm-workspace.yaml/lock file already reference it.
     if [ ! -e "patches/fs-extra+11.3.4.patch" ]; then
-        echo "Add fs-extra+11.3.4.patch patches"
+        echo "Replacing fs-extra+11.2.0.patch with fs-extra+11.3.4.patch"
+        rm -f patches/fs-extra+11.2.0.patch
         cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch patches/
-
-        echo "Ajust package.json"
-        cat package.json | jq -r --arg fs_extra patches/fs-extra+11.3.4.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
     else
-        echo "Skipping fs-extra patch copy: Signal already ships patches/fs-extra+11.3.4.patch"
+        echo "fs-extra+11.3.4.patch already present, skipping"
     fi
     
     #Patch to make the app responsive
