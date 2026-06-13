@@ -84,21 +84,33 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     echo "Add responsive.js"
     cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
 
-    # pnpm@10: configure cross-compilation in pnpm-workspace.yaml.
-    # Native modules with ARM64 prebuilds (sqlcipher, fs-xattr) can't be
-    # test-loaded on the x86_64 build host. Ignore their install scripts;
-    # the prebuilt binaries are already in the package directories and will
-    # be packaged correctly by electron-builder.
+    # pnpm@10/11: migrate onlyBuiltDependencies from package.json to pnpm-workspace.yaml.
+    # pnpm@10+ ignores the "pnpm" field in package.json; these settings must be in
+    # pnpm-workspace.yaml. We move Signal's onlyBuiltDependencies allowlist there,
+    # but EXCLUDE @signalapp/sqlcipher and fs-xattr — their ARM64 prebuilt .node
+    # binaries can't be dlopen'd on the x86_64 build host. By keeping them out of
+    # the allowlist, pnpm skips their install scripts. The prebuilt binaries are
+    # already in the package directories and will be packaged by electron-builder.
     python3 -c "
-content = open('pnpm-workspace.yaml').read().rstrip()
-addon = '''
+import json
 
-# Cross-compilation: skip install scripts for ARM64 native modules.
-ignoredBuiltDependencies:
-  - \"@signalapp/sqlcipher\"
-  - fs-xattr
-'''
-open('pnpm-workspace.yaml', 'w').write(content + addon)
+pkg = json.load(open('package.json'))
+only_built = pkg.get('pnpm', {}).get('onlyBuiltDependencies', [])
+
+# Remove packages whose ARM64 prebuilds cannot be test-loaded on the x86_64 build host
+cross_skip = {'@signalapp/sqlcipher', 'fs-xattr'}
+filtered = [p for p in only_built if p not in cross_skip]
+
+content = open('pnpm-workspace.yaml').read().rstrip()
+lines = ['\n', '\n# Cross-compilation: onlyBuiltDependencies migrated from package.json pnpm field',
+         '\n# (pnpm@10+ ignores that field). ARM64-only native modules are excluded so',
+         '\n# pnpm does not try to test-load their prebuilts on the x86_64 build host.',
+         '\nonlyBuiltDependencies:']
+for p in filtered:
+    lines.append(f'\n  - \"{p}\"')
+
+with open('pnpm-workspace.yaml', 'w') as f:
+    f.write(content + ''.join(lines) + '\n')
 "
     echo "Updated pnpm-workspace.yaml for cross-compilation"
     
