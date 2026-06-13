@@ -83,6 +83,24 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     
     echo "Add responsive.js"
     cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
+
+    # pnpm@10: configure cross-compilation in pnpm-workspace.yaml.
+    # Native modules with ARM64 prebuilds (sqlcipher, fs-xattr) can't be
+    # test-loaded on the x86_64 build host. Ignore their install scripts;
+    # the prebuilt binaries are already in the package directories and will
+    # be packaged correctly by electron-builder.
+    python3 -c "
+content = open('pnpm-workspace.yaml').read().rstrip()
+addon = '''
+
+# Cross-compilation: skip install scripts for ARM64 native modules.
+ignoredBuiltDependencies:
+  - \"@signalapp/sqlcipher\"
+  - fs-xattr
+'''
+open('pnpm-workspace.yaml', 'w').write(content + addon)
+"
+    echo "Updated pnpm-workspace.yaml for cross-compilation"
     
 fi
 
