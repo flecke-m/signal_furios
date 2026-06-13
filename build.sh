@@ -93,7 +93,7 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     cat > .pnpmfile.cjs << 'EOF'
 'use strict';
 function readPackage(pkg) {
-  if (pkg.name === '@signalapp/sqlcipher' || pkg.name === 'fs-xattr') {
+  if ((pkg.name === '@signalapp/sqlcipher' || pkg.name === 'fs-xattr') && pkg.scripts) {
     delete pkg.scripts.install;
     delete pkg.scripts.postinstall;
   }
