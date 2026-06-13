@@ -4,9 +4,11 @@
 
 ---
 
-## ⚠️ Important - Alpha State
+## ⚠️ Important - Alpha State - Vibe coded
 
 Signal FuriOS is currently in **alpha**. Please read the limitations and usage notes carefully before using it.
+
+As well this is heavily Vibe coded with AI.
 
 ---
 
@@ -41,6 +43,4 @@ To build a Debian package for arm64 (compatible with Debian 13 Trixie and simila
 
 **Note:** Building requires cross-compilation for arm64, so qemu-user-static is used. Ensure your system supports it.
 
-4. The resulting package will be `signalut_7.86.0-1_arm64.deb` (version may vary).
 
-**Note:** Building requires cross-compilation for arm64, so qemu-user-static is used. Ensure your system supports it.
