@@ -11,11 +11,15 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 # Fix: define binary/binary-arch explicitly to always run build.sh and package directly.
 binary binary-arch:
 	mkdir -p build
+	# Override host arch so dpkg-gencontrol generates an arm64 control file
+	# even when running on an amd64 build host.
+	$(eval export DEB_HOST_ARCH := arm64)
+	$(eval export DEB_HOST_GNU_TYPE := aarch64-linux-gnu)
 	test -d build/install || BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh
 	rm -rf debian/signalfurios
 	cp -r build/install debian/signalfurios
 	mkdir -p debian/signalfurios/DEBIAN
-	dpkg-gencontrol -psignalfurios -Pdebian/signalfurios -aarm64
+	dpkg-gencontrol -psignalfurios -Pdebian/signalfurios
 	dpkg-deb --root-owner-group --build debian/signalfurios ..
 
 binary-indep:
