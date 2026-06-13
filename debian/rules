@@ -1,36 +1,27 @@
 #!/usr/bin/make -f
 
-# Force arm64 as the target: this package cross-compiles Signal for arm64 on an amd64 host.
-# Without this, dpkg-buildpackage silently skips the binary build when host arch != arm64.
-export DEB_HOST_ARCH := arm64
-export DEB_HOST_GNU_TYPE := aarch64-linux-gnu
-export DEB_HOST_MULTIARCH := aarch64-linux-gnu
-
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
 %:
 	dh $@
 
-override_dh_auto_build:
+# dpkg-buildpackage on an amd64 host building arm64 skips the build phase entirely
+# (goes clean → dpkg-source → binary without ever calling debian/rules build).
+# Debhelper's dh_auto_install therefore sees no artifacts and produces nothing.
+# Fix: define binary/binary-arch explicitly to always run build.sh and package directly.
+binary binary-arch:
 	mkdir -p build
-	BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh
+	test -d build/install || BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh
+	rm -rf debian/signalfurios
+	cp -r build/install debian/signalfurios
+	mkdir -p debian/signalfurios/DEBIAN
+	dpkg-gencontrol -psignalfurios -Pdebian/signalfurios
+	dpkg-deb --root-owner-group --build debian/signalfurios ..
 
-override_dh_auto_install:
-	# If the build stage was skipped (cross-compilation on amd64 building arm64),
-	# run build.sh here before installing.
-	test -d build/install || (mkdir -p build && BUILD_DIR=$(CURDIR)/build ROOT=$(CURDIR) ./build.sh)
-	mkdir -p debian/signalfurios
-	cp -r build/install/* debian/signalfurios/
+binary-indep:
 
 override_dh_dwz:
 
 override_dh_strip:
-	# Skip stripping for cross-compilation (we're building arm64 on x86_64)
-	# dh_strip
 
 override_dh_shlibdeps:
-	# Skip shlibdeps for cross-compilation (we're building arm64 on x86_64)
-	# dh_shlibdeps
-	# Skip library dependency checking for cross-compilation
-	# Applications are bundled with their own libraries in /opt/Signal
-	dh_shlibdeps -- -xdebian/signalfurios || true
